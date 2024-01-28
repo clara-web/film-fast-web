@@ -1,0 +1,7 @@
+<div #videoContainer>
+  @if (isYouTubeUrl()) {
+    <youtube-player #tubePlayer [videoId]="getYouTubeContentId()"></youtube-player>
+  } @else {
+    <video #videoPlayer id="videoPlayer" controls autoplay playsinline></video>
+  }
+</div>

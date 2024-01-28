@@ -1,0 +1,9 @@
+<div style="position: relative; width: 100%">
+  <video-player [source]="source" style="position: absolute; width: 100%"></video-player>
+  <div style="position: absolute; display: inline-flex">
+    <button mat-icon-button (click)="onBackPressed()">
+      <mat-icon [ngStyle]="{'color':'white'}">arrow_back</mat-icon>
+    </button>
+    <p style="color: white; margin: auto">{{title}}</p>
+  </div>
+</div>

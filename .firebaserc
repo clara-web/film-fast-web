@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "film-fast-9e221"
+  },
+  "targets": {
+    "film-fast-9e221": {
+      "hosting": {
+        "film-fast-web": [
+          "film-fast-9e221"
+        ]
+      }
+    }
+  }
+}

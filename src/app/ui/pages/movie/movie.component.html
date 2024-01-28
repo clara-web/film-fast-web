@@ -1,0 +1,55 @@
+<div class="card" #body>
+  <div class="card-header" style="display: inline-block;">
+    <button mat-flat-button (click)="onBackPressed()">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
+  </div>
+  <div class="card-body">
+    @if (movie != null) {
+      <section class="movie-details-area" data-background="img/bg/movie_details_bg.jpg">
+        <div class="container">
+          <div class="row position-relative">
+            <div class="col-xl-3 col-lg-4 col-sm-12">
+              <div class="movie-details-img">
+                <img src="{{movie.poster}}" alt="" style="width: 100%">
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-8 col-sm-12">
+              <div class="movie-details-content">
+                <h2>{{ movie.title }}</h2>
+                <div class="banner-meta">
+                <span><mat-icon>date_range</mat-icon>
+                  {{ movie.releaseDate }}</span>
+                  <span><mat-icon>query_builder</mat-icon>
+                    {{ movie.runtime }} min</span>
+                </div>
+                <p class="overview">{{ movie.overview }}</p>
+                <div class="movie-details-prime">
+                  @if (movie.trailers != null) {
+                    @if (movie.trailers.length == 1) {
+                      <button (click)="onPlayTrailerClick(movie.trailers[0])" mat-flat-button>Xem trailer</button>
+                    } @else if (movie.trailers.length > 1) {
+                      @for (url of movie.trailers; track $index) {
+                        <button (click)="onPlayTrailerClick(url)" mat-flat-button>Xem trailer {{ $index + 1 }}</button>
+                      }
+                    }
+                  }
+                  <button (click)="onAddTrailerClick()" mat-flat-button>Thêm trailer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <mat-divider style="margin: 20px 0"></mat-divider>
+      <section>
+        <movie-sources-cmp [media]="movie" (onPreviewClick)="onPreviewLink($event)"></movie-sources-cmp>
+      </section>
+    } @else {
+      <div style="height: 80vh">
+        <mat-progress-spinner diameter="50" mode="indeterminate" class="center"></mat-progress-spinner>
+      </div>
+    }
+  </div>
+</div>

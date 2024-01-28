@@ -1,0 +1,12 @@
+<div mat-dialog-title style="padding-top: 12px">
+  Bạn chắc chắn muốn xoá?
+</div>
+<mat-divider></mat-divider>
+<mat-dialog-content style="padding-top: 12px; padding-bottom: 12px;">
+  {{data}}
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button mat-dialog-close (click)="confirm()">OK</button>
+</mat-dialog-actions>

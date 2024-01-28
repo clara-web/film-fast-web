@@ -1,0 +1,48 @@
+<div mat-dialog-title style="padding-top: 12px">
+  <input style="width: calc(100% - 60px); margin-right: 8px; font-size: medium" #queryInput matInput
+         [value]="media.title" [matMenuTriggerFor]="menu" #menuTrigger>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="fillOriginalTitle()">{{ media.originalTitle }}</button>
+  </mat-menu>
+  <button style="vertical-align: middle;" class="icon-button-small" mat-icon-button color="primary"
+          (click)="onHeaderBtnClick()">
+    @if (isEditing()) {
+      <mat-icon>search</mat-icon>
+    } @else {
+      <mat-icon>edit</mat-icon>
+    }
+  </button>
+</div>
+<mat-divider></mat-divider>
+<mat-dialog-content style="padding-top: 12px; padding-bottom: 12px;">
+  @if (searchResult != undefined && searchResult.items != undefined) {
+    <mat-selection-list #links (selectionChange)="selectionChange($event)">
+      @for (item of searchResult.items; track $index) {
+        <mat-list-option style="min-height: 100px">
+          <div>
+            <p style="font-size: medium; font-weight: bold">{{ item.title }}</p>
+            <a style="font-size: small">{{ item.link }}</a>
+          </div>
+        </mat-list-option>
+        @if ($index < searchResult.items.length - 1) {
+          <mat-divider></mat-divider>
+        }
+      }
+    </mat-selection-list>
+  }
+  @if (isLoading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  } @else if (error != null) {
+    <p>Cannot find now, try with manually input:</p>
+    <input style="width: calc(100% - 60px); margin-right: 8px; font-size: medium" #addSourceInput matInput>
+    <button style="vertical-align: middle;" class="icon-button-small" mat-icon-button color="primary"
+            (click)="saveManualInputSource()">
+      <mat-icon>save</mat-icon>
+    </button>
+  }
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button mat-dialog-close (click)="submitData()">OK</button>
+</mat-dialog-actions>

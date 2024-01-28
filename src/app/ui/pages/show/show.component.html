@@ -1,0 +1,67 @@
+<div class="card">
+  <div class="card-header" style="display: inline-block;">
+    <button mat-flat-button (click)="onBackPressed()">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
+  </div>
+  <div class="card-body">
+    @if (show != null) {
+      <section class="movie-details-area" data-background="img/bg/movie_details_bg.jpg">
+        <div class="container">
+          <div class="row position-relative">
+            <div class="col-xl-3 col-lg-4">
+              <div class="movie-details-img">
+                <img src="{{show.mdPoster}}" alt="">
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-8">
+              <div class="movie-details-content">
+                <h2>{{ show.title }}</h2>
+                <div class="banner-meta">
+                <span><mat-icon>date_range</mat-icon>
+                  {{ show.releaseDate }}</span>
+                  <span><mat-icon>query_builder</mat-icon>
+                    {{ show.runtime }} min</span>
+                </div>
+
+                <p class="overview">{{ show.overview }}</p>
+                <div class="movie-details-prime">
+                  @if (show.trailers != null) {
+                    @if (show.trailers.length == 1) {
+                      <button (click)="onPlayTrailerClick(show.trailers[0])" mat-flat-button>Xem trailer</button>
+                    } @else if (show.trailers.length > 1) {
+                      @for (url of show.trailers; track $index) {
+                        <button (click)="onPlayTrailerClick(url)" mat-flat-button>Xem trailer {{ $index + 1 }}</button>
+                      }
+                    }
+                  }
+                  <button (click)="onAddTrailerClick()" mat-flat-button>Thêm trailer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <mat-divider style="margin: 20px 0"></mat-divider>
+      <section>
+        @if (seasons != undefined && seasons.length > 0) {
+          <mat-tab-group #seasonTabs mat-stretch-tabs="false" mat-align-tabs="start"
+                         (selectedTabChange)="tabChanged($event)">
+            @for (season of seasons; track $index) {
+              <mat-tab label="{{season.name}}">
+                @if (isTabSelected($index) || seasons.length == 1) {
+                  <season-cmp [show]="show" [seasonNumber]="season.number"></season-cmp>
+                }
+              </mat-tab>
+            }
+          </mat-tab-group>
+        }
+      </section>
+    } @else {
+      <div style="height: 80vh">
+        <mat-progress-spinner diameter="50" mode="indeterminate" class="center"></mat-progress-spinner>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<table mat-table [dataSource]="dataSource">
+  <ng-container matColumnDef="no" sticky>
+    <th mat-header-cell *matHeaderCellDef style="width: 30px;"> Episode</th>
+    <td mat-cell *matCellDef="let ep" style="width: 30px;">{{ ep.number }}</td>
+  </ng-container>
+  <ng-container matColumnDef="name" sticky>
+    <th mat-header-cell *matHeaderCellDef> Name</th>
+    <td mat-cell *matCellDef="let ep">{{ ep.title }}</td>
+  </ng-container>
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef> Actions</th>
+    <td mat-cell *matCellDef="let ep; let i = index;">
+      <button mat-icon-button color="primary" (click)="openEpisodeDetails(ep.number)">
+        <mat-icon>info</mat-icon>
+      </button>
+      @if (ep.sources?.length > 0) {
+        <button mat-icon-button color="primary" (click)="playEpisode(ep.number)">
+          <mat-icon>play_arrow</mat-icon>
+        </button>
+      }
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

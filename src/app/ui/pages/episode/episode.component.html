@@ -1,0 +1,59 @@
+<div class="card" #body>
+  <div class="card-header" style="display: inline-block;">
+    <button mat-flat-button (click)="onBackPressed()">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
+  </div>
+  <div class="card-body">
+    @if (episode != null) {
+      <section class="movie-details-area" data-background="img/bg/movie_details_bg.jpg">
+        <div class="container">
+          <div class="row position-relative">
+            @if (episode.poster?.length > 0) {
+              <div class="col-xl-3 col-lg-4 col-sm-12">
+                <div class="movie-details-img">
+                  <img src="{{episode.poster}}" alt="" style="width: 100%">
+                </div>
+              </div>
+              <div class="col-xl-6 col-lg-8 col-sm-12">
+                <div class="movie-details-content">
+                  <h2>{{ episode.title }}</h2>
+                  <div class="banner-meta">
+                <span><mat-icon>date_range</mat-icon>
+                  {{ episode.releaseDate }}</span>
+                    <span><mat-icon>query_builder</mat-icon>
+                      {{ episode.runtime }} min</span>
+                  </div>
+                  <p class="overview">{{ episode.overview }}</p>
+                </div>
+              </div>
+            } @else {
+              <div>
+                <div class="movie-details-content">
+                  <h2>{{ episode.title }}</h2>
+                  <div class="banner-meta">
+                <span><mat-icon>date_range</mat-icon>
+                  {{ episode.releaseDate }}</span>
+                    <span><mat-icon>query_builder</mat-icon>
+                      {{ episode.runtime }} min</span>
+                  </div>
+                  <p class="overview">{{ episode.overview }}</p>
+                </div>
+              </div>
+            }
+
+          </div>
+          <mat-divider style="margin: 20px 0"></mat-divider>
+          <div class="movie-details-prime">
+            <episode-sources-cmp [media]="episode" (onPreviewClick)="onPreviewLink($event)"></episode-sources-cmp>
+          </div>
+        </div>
+      </section>
+    } @else {
+      <div style="height: 80vh">
+        <mat-progress-spinner diameter="50" mode="indeterminate" class="center"></mat-progress-spinner>
+      </div>
+    }
+  </div>
+</div>
