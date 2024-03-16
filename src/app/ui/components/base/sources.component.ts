@@ -49,7 +49,8 @@ export abstract class SourcesComponent<T extends Media & SourceList> implements 
     this.dialog.open(component, {
       data: {
         media: this.media
-      }
+      },
+      width: '50vw'
     }).afterClosed().subscribe(value => {
       if (this.media.sources == undefined) {
         this.media.sources = [];

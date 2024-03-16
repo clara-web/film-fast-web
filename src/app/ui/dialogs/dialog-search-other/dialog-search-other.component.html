@@ -1,1 +1,15 @@
-<p>dialog-search-other works!</p>
+<h2 mat-dialog-title>{{ media.title }}</h2>
+<mat-dialog-content>
+  <mat-form-field style="width: 100%">
+    <input matInput type="text" [(ngModel)]="value" placeholder="https://">
+    @if (value) {
+      <button matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button mat-dialog-close (click)="submitData()">OK</button>
+</mat-dialog-actions>
