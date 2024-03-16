@@ -1,5 +1,4 @@
 import {FsMedia} from "./fs-media";
-import {Source} from "./source";
 import {FsSeason} from "./fs-season";
 
 export class FsShow implements FsMedia {

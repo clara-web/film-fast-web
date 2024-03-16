@@ -1,11 +1,8 @@
-import {
-  AngularFirestore,
-  AngularFirestoreCollection,
-} from '@angular/fire/compat/firestore';
+import {AngularFirestore, AngularFirestoreCollection,} from '@angular/fire/compat/firestore';
 import {Media} from 'app/data/models/media';
 import {ResultPage} from 'app/data/models/result_page';
-import {Observable, map, mergeMap} from 'rxjs';
-import {AjaxResponse, ajax} from 'rxjs/ajax';
+import {map, mergeMap, Observable} from 'rxjs';
+import {ajax, AjaxResponse} from 'rxjs/ajax';
 import {FsMedia} from "../models/fs-media";
 import {BaseService} from "./base.service";
 
@@ -63,7 +60,7 @@ export abstract class MediaService<T extends Media, F extends FsMedia> extends B
   }
 
   getDetails(id: number): Observable<T> {
-    return this.requestApi(this.detailsPath() + id + '?language=vi-VN').pipe(
+    return this.requestApi(this.detailsPath() + id + '?language=en-US').pipe(
       map((e) => this.mapApiTo(e.response)),
       mergeMap((m) =>
         this.allMediaFBObservable.pipe(
@@ -73,8 +70,8 @@ export abstract class MediaService<T extends Media, F extends FsMedia> extends B
               this.mergeApiAndFs(m, media);
             }
             return m;
-          })
-        )
+          }),
+        ),
       )
     );
   }

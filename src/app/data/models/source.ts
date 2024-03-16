@@ -43,6 +43,19 @@ export class FShareSource extends Source {
   }
 }
 
+export class DailymotionSource extends Source {
+  scheme: string = "dai://";
+
+  constructor(name: string, public contentId: string) {
+    super(name,
+      `https://www.dailymotion.com/video/${contentId}`,
+      "auto",
+      "auto",
+      "auto",
+      `dai://${contentId}?name=${name}`);
+  }
+}
+
 export class HlsSource extends Source {
   scheme: string = "hls://";
 
