@@ -63,7 +63,7 @@ export abstract class MediaService<T extends Media, F extends FsMedia> extends B
   }
 
   getDetails(id: number): Observable<T> {
-    return this.requestApi(this.detailsPath() + id + '?language=vi-VN').pipe(
+    return this.requestApi(this.detailsPath() + id + '?language=en-US').pipe(
       map((e) => this.mapApiTo(e.response)),
       mergeMap((m) =>
         this.allMediaFBObservable.pipe(
