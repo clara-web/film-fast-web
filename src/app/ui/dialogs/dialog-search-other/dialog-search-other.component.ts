@@ -59,7 +59,6 @@ export class DialogSearchOtherComponent {
       } else {
         this.selected.push(new OtherSource(this.media.title, this.value, "Auto", "Unknown", "Unknown"));
       }
-      console.log(this.selected);
       this.dialogRef.close(this.selected);
     }
   }

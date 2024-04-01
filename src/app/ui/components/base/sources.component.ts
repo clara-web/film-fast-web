@@ -51,14 +51,15 @@ export abstract class SourcesComponent<T extends Media & SourceList> implements 
         media: this.media
       },
       width: '50vw'
-    }).afterClosed().subscribe(value => {
+    }).afterClosed().subscribe(async value => {
       if (this.media.sources == undefined) {
         this.media.sources = [];
       }
       if (value?.length > 0) {
         this.media.sources.push(...value)
         this.dataSource.data = this.media.sources;
-        this.update(this.media)
+        let newVar = await this.update(this.media);
+        console.log(newVar);
       }
     })
   }
@@ -66,11 +67,11 @@ export abstract class SourcesComponent<T extends Media & SourceList> implements 
   deleteSource(srcIndex: number) {
     this.dialog.open(DialogDeleteConfirmationComponent, {
       data: this.media.sources[srcIndex].url
-    }).afterClosed().subscribe(value => {
+    }).afterClosed().subscribe(async value => {
       if (value == true) {
         this.media.sources.splice(srcIndex, 1)
         this.dataSource.data = this.media.sources;
-        this.update(this.media)
+        await this.update(this.media);
       }
     })
   }

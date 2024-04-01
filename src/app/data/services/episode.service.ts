@@ -55,13 +55,9 @@ export class EpisodeService extends BaseService {
   }
 
   set(episode: Episode) {
-    return this.episodeCollection.add({...JSON.parse(JSON.stringify(this.mapApiToFs(episode)))})
-      .catch(reason => {
-        console.error(reason);
-      })
-      .then(value => {
-        console.log(value);
-      });
+    return this.episodeCollection
+      .doc(episode.id)
+      .set({...JSON.parse(JSON.stringify(this.mapApiToFs(episode)))});
   }
 
   delete(id: string) {
