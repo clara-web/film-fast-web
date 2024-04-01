@@ -14,7 +14,7 @@ import {Episode} from "../models/episode";
 export class ShowsService extends MediaService<Show, FsShow> {
 
   constructor(db: AngularFirestore) {
-    super(db, 'shows');
+    super(db, 'tvs');
   }
 
   searchPath = () => 'search/tv';
