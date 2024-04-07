@@ -5,6 +5,7 @@ import {Episode} from "../models/episode";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/compat/firestore";
 import {FsEpisode} from "../models/fs-episode";
 import {UrlUtil} from "../../shared/url-util";
+import {deleteField} from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,13 @@ export class EpisodeService extends BaseService {
         let data = doc.data();
         return new FsEpisode(doc.id, data.tmdbId, data.sources);
       })));
+    let collection = db.collection("episodes");
+    collection.get().subscribe(value => {
+      value.docs.forEach(doc => {
+        collection.doc(doc.id).set({id: deleteField()}, {merge: true}).then(r => console.log(`Result ${r}`));
+      })
+    });
+    console.log("init episode service");
   }
 
   get(seriesId: number, seasonNumber: number, epNumber: number): Observable<Episode> {
@@ -46,6 +54,7 @@ export class EpisodeService extends BaseService {
           return this.episodesObservable.pipe(map(fsEps => {
             let fsEp = fsEps.find(value => value.tmdbId == episode.tmdbId)
             if (fsEp != null) {
+              episode.id = fsEp.id;
               episode.sources = fsEp.sources == null ? [] : fsEp.sources.map((v: string) => UrlUtil.parse(v));
             }
             return episode;

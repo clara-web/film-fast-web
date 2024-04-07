@@ -10,6 +10,28 @@ import {FsMovie} from "../models/fs-movie";
 export class MoviesService extends MediaService<Movie, FsMedia> {
   constructor(db: AngularFirestore) {
     super(db, 'movies');
+    // this.allMediaFBObservable.subscribe(value => {
+    //   for (const fsEpisode of value) {
+    //     if (fsEpisode instanceof FsMovie){
+    //       console.log(fsEpisode.sources)
+    //       for (let i = 0; i < fsEpisode.sources.length; i++) {
+    //         fsEpisode.sources[i] = fsEpisode.sources[i].replaceAll("https://www.fshare.vn/file/", "fs://");
+    //         fsEpisode.sources[i] = fsEpisode.sources[i].replaceAll("https://www.youtube.com/watch?v=", "yt://");
+    //       }
+    //       console.log(fsEpisode.sources)
+    //     }
+    //
+    //     this.mediaCollection
+    //       .doc(fsEpisode.id)
+    //       .set({...JSON.parse(JSON.stringify(fsEpisode))});
+    //   }
+    // })
+    // let collection = db.collection("movies");
+    // collection.get().subscribe(value => {
+    //   value.docs.forEach(doc => {
+    //     collection.doc(doc.id).set({id: deleteField()}, {merge: true}).then(r => console.log(`Result ${r}`));
+    //   })
+    // });
   }
 
   searchPath(): string {
