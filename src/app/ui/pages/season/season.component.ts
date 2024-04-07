@@ -6,13 +6,20 @@ import {MaterialsModule} from "../../materials/materials.module";
 import {ShowsService} from "../../../data/services/shows.service";
 import {Source} from "../../../data/models/source";
 import {Router} from "@angular/router";
-import {map} from "rxjs";
+import {DialogSearchOtherComponent} from "../../dialogs/dialog-search-other/dialog-search-other.component";
+import {
+  DialogDeleteConfirmationComponent
+} from "../../dialogs/dialog-delete-confirmation/dialog-delete-confirmation.component";
+import {MatDialog} from "@angular/material/dialog";
+import {EpisodeService} from "../../../data/services/episode.service";
+import {MatBadge} from "@angular/material/badge";
 
 @Component({
   selector: 'season-cmp',
   standalone: true,
   imports: [
-    MaterialsModule
+    MaterialsModule,
+    MatBadge
   ],
   templateUrl: './season.component.html',
   styleUrl: './season.component.css'
@@ -27,7 +34,7 @@ export class SeasonComponent implements AfterViewInit {
   episodes: Episode[] = [];
   dataSource = new MatTableDataSource<Episode>(this.episodes);
 
-  constructor(private service: ShowsService, private router: Router) {
+  constructor(private service: ShowsService, private dialog: MatDialog, private epService: EpisodeService, private router: Router,) {
   }
 
   ngAfterViewInit(): void {
@@ -63,5 +70,39 @@ export class SeasonComponent implements AfterViewInit {
       }
     })
       .then(value => console.log(value))
+  }
+
+
+  addLink(ep: Episode) {
+    return this.openDialog(ep);
+  }
+
+  private openDialog(ep: Episode) {
+    this.dialog.open(DialogSearchOtherComponent, {
+      data: {
+        media: ep
+      },
+      width: '50vw'
+    }).afterClosed().subscribe(async value => {
+      if (ep.sources == undefined) {
+        ep.sources = [];
+      }
+      if (value?.length > 0) {
+        ep.sources.push(...value)
+        await this.epService.set(ep);
+      }
+    })
+  }
+
+  deleteSource(srcIndex: number) {
+    // this.dialog.open(DialogDeleteConfirmationComponent, {
+    //   data: this.media.sources[srcIndex].url
+    // }).afterClosed().subscribe(async value => {
+    //   if (value == true) {
+    //     this.media.sources.splice(srcIndex, 1)
+    //     this.dataSource.data = this.media.sources;
+    //     await this.update(this.media);
+    //   }
+    // })
   }
 }

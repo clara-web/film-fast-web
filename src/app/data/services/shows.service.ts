@@ -1,19 +1,20 @@
 import {Injectable} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/compat/firestore';
-import {Observable, map} from 'rxjs';
+import {map, Observable, switchMap} from 'rxjs';
 import {Season} from 'app/data/models/season';
 import {MediaService} from './media.service';
 import {UrlUtil} from "../../shared/url-util";
 import {FsShow} from "../models/fs-show";
 import {Show} from "../models/show";
 import {Episode} from "../models/episode";
+import {EpisodeService} from "./episode.service";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShowsService extends MediaService<Show, FsShow> {
 
-  constructor(db: AngularFirestore) {
+  constructor(db: AngularFirestore, private episodeService: EpisodeService) {
     super(db, 'tvs');
   }
 
@@ -102,23 +103,35 @@ export class ShowsService extends MediaService<Show, FsShow> {
         map((e) => {
           const res = e.response;
           const season = new Season(res['id'], res['name'], res['season_number'], res['episode_count']);
-          res['episodes'].forEach((data) => {
-            season.episodes.push(new Episode(
-              undefined,
-              data.name,
-              data.original_name,
-              data.still_path,
-              data.overview,
-              data.release_date,
-              data.runtime,
-              data.id,
-              data.episode_number,
-              []
-            ));
-          });
+
+          season.episodes = res['episodes']
+            .map(raw =>
+              new Episode(
+                undefined,
+                raw.name,
+                raw.original_name,
+                raw.still_path,
+                raw.overview,
+                raw.release_date,
+                raw.runtime,
+                raw.id,
+                raw.episode_number,
+                []
+              ));
           season.episodeCount = season.episodes.length;
           return season;
-        })
+        }),
+        switchMap(season =>
+          this.episodeService.episodesObservable.pipe(map(fsEps => {
+            season.episodes.forEach(ep => {
+              let fsEp = fsEps.find(value => value.tmdbId == ep.tmdbId)
+              if (fsEp != null) {
+                ep.id = fsEp.id;
+                ep.sources = fsEp.sources == null ? [] : fsEp.sources.map((v: string) => UrlUtil.parse(v));
+              }
+            })
+            return season;
+          })))
       );
   }
 }

@@ -13,11 +13,13 @@
       <button mat-icon-button color="primary" (click)="openEpisodeDetails(ep.number)">
         <mat-icon>info</mat-icon>
       </button>
-      @if (ep.sources?.length > 0) {
-        <button mat-icon-button color="primary" (click)="playEpisode(ep.number)">
-          <mat-icon>play_arrow</mat-icon>
-        </button>
-      }
+      <button mat-icon-button color="primary" (click)="addLink(ep)">
+        @if (ep.sources?.length > 0) {
+          <mat-icon matBadge="{{ ep.sources.length }}" matBadgeColor="primary">add</mat-icon>
+        } @else {
+          <mat-icon>add</mat-icon>
+        }
+      </button>
     </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

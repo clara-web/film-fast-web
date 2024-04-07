@@ -23,12 +23,12 @@ export class EpisodeService extends BaseService {
         let data = doc.data();
         return new FsEpisode(doc.id, data.tmdbId, data.sources);
       })));
-    let collection = db.collection("episodes");
-    collection.get().subscribe(value => {
-      value.docs.forEach(doc => {
-        collection.doc(doc.id).set({id: deleteField()}, {merge: true}).then(r => console.log(`Result ${r}`));
-      })
-    });
+    // let collection = db.collection("episodes");
+    // collection.get().subscribe(value => {
+    //   value.docs.forEach(doc => {
+    //     collection.doc(doc.id).set({id: deleteField()}, {merge: true}).then(r => console.log(`Result ${r}`));
+    //   })
+    // });
     console.log("init episode service");
   }
 
