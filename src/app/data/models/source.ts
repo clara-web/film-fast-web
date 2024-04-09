@@ -56,6 +56,19 @@ export class DailymotionSource extends Source {
   }
 }
 
+export class GDriveSource extends Source {
+  scheme: string = "gd://";
+
+  constructor(name: string, public contentId: string) {
+    super(name,
+      `https://www.googleapis.com/drive/v3/files/${contentId}?alt=media&key=AIzaSyDrQoYphLoyLUHL_7o9C2tV7f5Zhit0XkI`,
+      "auto",
+      "auto",
+      "auto",
+      `gd://${contentId}?name=${name}`);
+  }
+}
+
 export class HlsSource extends Source {
   scheme: string = "hls://";
 
