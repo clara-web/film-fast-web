@@ -7,7 +7,7 @@ export abstract class BaseService {
       headers: {
         accept: 'application/json',
         Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4YjIwODk3ZDQzODFmNzMzODA5YmEzM2U5MWVjNTFlNyIsInN1YiI6IjVjNzUyZTUwYzNhMzY4NDg0NmQyZjNiMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9QxKqV41Mu7G48hGdq3dQ8hWUZiGr92xZrwbBwyEsYM',
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxYzgyMWUxNzVjMDc2NDVhMTJkMDAzY2M4ZDQyZDQ1NCIsInN1YiI6IjVjNzUyZTUwYzNhMzY4NDg0NmQyZjNiMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._gwds5jGWvv1qm5Zolgq_nUbGrdjqrba1ETumUTdOnk',
       },
     });
   }
