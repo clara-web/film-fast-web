@@ -48,17 +48,6 @@ export abstract class MediaService<T extends Media, F extends FsMedia> extends B
 
   delete = (id: string) => this.mediaCollection.doc(id).delete();
 
-  protected requestApi(path: string) {
-    return ajax({
-      url: `https://api.themoviedb.org/3/${path}`,
-      headers: {
-        accept: 'application/json',
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4YjIwODk3ZDQzODFmNzMzODA5YmEzM2U5MWVjNTFlNyIsInN1YiI6IjVjNzUyZTUwYzNhMzY4NDg0NmQyZjNiMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9QxKqV41Mu7G48hGdq3dQ8hWUZiGr92xZrwbBwyEsYM',
-      },
-    });
-  }
-
   getDetails(id: number): Observable<T> {
     return this.requestApi(this.detailsPath() + id + '?language=en-US').pipe(
       map((e) => this.mapApiTo(e.response)),
