@@ -32,7 +32,7 @@ export class DialogSearchOtherComponent {
   prefix_dailymotion = "https://www.dailymotion.com/video/";
   prefix_dailymotion_short = "https://dai.ly/";
   prefix_youtube = "https://www.youtube.vn/watch";
-  prefix_fshare = "https://www.fshare.vn/file";
+  prefix_fshare = "https://www.fshare.vn/file/";
   prefix_gdrive = "https://drive.google.com/file/d/";
 
   constructor(@Inject(MAT_DIALOG_DATA)
