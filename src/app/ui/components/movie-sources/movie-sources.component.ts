@@ -15,5 +15,5 @@ export class MovieSourcesComponent extends SourcesComponent<Movie> {
         super(dialog);
     }
 
-    update = (movie: Movie) => this.service.set(movie);
+    update = (movie: Movie) => this.service.update(movie);
 }

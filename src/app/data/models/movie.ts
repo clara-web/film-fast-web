@@ -2,8 +2,8 @@ import {Media} from './media';
 import {Source} from "./source";
 
 export class Movie implements Media {
+  id: string;
   type = 'movie';
-  id?: string;
   title: string;
   originalTitle: string;
   poster: string;
@@ -11,7 +11,6 @@ export class Movie implements Media {
   trailers: Source[];
   releaseDate: string;
   runtime: number;
-  tmdbId?: number;
   sources: Source[];
 
   smPoster: string;
@@ -27,7 +26,6 @@ export class Movie implements Media {
     trailers: Source[],
     releaseDate: string,
     runtime: number,
-    tmdbId?: number,
     sources?: Source[]
   ) {
     this.id = id;
@@ -41,7 +39,6 @@ export class Movie implements Media {
     this.poster = 'https://image.tmdb.org/t/p/w342' + poster;
     this.releaseDate = releaseDate;
     this.runtime = runtime;
-    this.tmdbId = tmdbId;
     this.sources = sources;
   }
 
@@ -55,7 +52,6 @@ export class Movie implements Media {
       movie.trailers,
       movie.releaseDate,
       movie.runtime,
-      movie.tmdbId,
       movie.sources
     );
   }

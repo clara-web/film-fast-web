@@ -17,6 +17,6 @@ export class ShowsComponent extends BaseMediaListComponent {
   }
 
   onItemClick(show: Media) {
-    this.router.navigate([`show`, show.tmdbId]).then(r => console.log(`Navigate to ${show.title}`))
+    this.router.navigate([`show`, show.id]).then(r => console.log(`Navigate to ${show.title}`))
   };
 }

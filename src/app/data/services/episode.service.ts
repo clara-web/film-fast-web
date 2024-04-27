@@ -11,18 +11,9 @@ import {deleteField} from '@angular/fire/firestore';
   providedIn: 'root'
 })
 export class EpisodeService extends BaseService {
-  episodeCollection: AngularFirestoreCollection<FsEpisode>;
-  episodesObservable: Observable<FsEpisode[]>;
 
   constructor(db: AngularFirestore) {
     super();
-    this.episodeCollection = db.collection("episodes");
-    this.episodesObservable = this.episodeCollection
-      .get()
-      .pipe(map((ss) => ss.docs.map((doc) => {
-        let data = doc.data();
-        return new FsEpisode(doc.id, data.tmdbId, data.sources);
-      })));
     // let collection = db.collection("episodes");
     // collection.get().subscribe(value => {
     //   value.docs.forEach(doc => {
@@ -38,7 +29,6 @@ export class EpisodeService extends BaseService {
         map(value => {
           let data = value.response
           return new Episode(
-            undefined,
             data["name"],
             data["original_name"],
             this.parseImage(data["still_path"], ImageSize.ORIGINAL),
@@ -50,30 +40,6 @@ export class EpisodeService extends BaseService {
             []
           )
         }),
-        switchMap(episode => {
-          return this.episodesObservable.pipe(map(fsEps => {
-            let fsEp = fsEps.find(value => value.tmdbId == episode.tmdbId)
-            if (fsEp != null) {
-              episode.id = fsEp.id;
-              episode.sources = fsEp.sources == null ? [] : fsEp.sources.map((v: string) => UrlUtil.parse(v));
-            }
-            return episode;
-          }))
-        })
       );
   }
-
-  set(episode: Episode) {
-    return this.episodeCollection
-      .doc(episode.id)
-      .set({...JSON.parse(JSON.stringify(this.mapApiToFs(episode)))});
-  }
-
-  delete(id: string) {
-    return this.episodeCollection.doc(id).delete();
-  }
-
-  private mapApiToFs = (episode: Episode) => new FsEpisode(episode.id,
-    episode.tmdbId,
-    episode.sources == null ? [] : episode.sources.map(value => value.shortUrl));
 }

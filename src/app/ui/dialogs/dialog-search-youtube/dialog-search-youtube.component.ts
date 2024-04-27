@@ -25,8 +25,4 @@ export class DialogSearchYoutubeComponent extends DialogSearchBaseComponent {
   }, dialogRef: MatDialogRef<SearchResultItem[]>, service: SearchLinkService) {
     super(options, dialogRef, service);
   }
-
-  processSourceString(title: string, sourceStr: string): Source {
-    return new YouTubeSource(title, UrlUtil.getAllUrlParams(sourceStr)["v"])
-  }
 }

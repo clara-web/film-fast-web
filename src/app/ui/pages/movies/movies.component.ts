@@ -13,7 +13,7 @@ import {Movie} from "../../../data/models/movie";
 })
 export class MoviesComponent extends BaseMediaListComponent {
   onItemClick(movie: Media) {
-    this.router.navigate([`movie`, movie.tmdbId]).then(r => console.log(`Navigate to ${movie.title}`))
+    this.router.navigate([`movie`, movie.id]).then(r => console.log(`Navigate to ${movie.title}`))
   };
 
   constructor(service: MoviesService, dialog: MatDialog, router: Router) {

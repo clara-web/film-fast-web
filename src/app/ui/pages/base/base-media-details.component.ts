@@ -27,7 +27,6 @@ export abstract class BaseMediaDetailsComponent implements OnInit, AfterViewInit
   }
 
   ngOnInit(): void {
-    console.log(`OnInit page ${this}`)
   }
 
   abstract onLoaded(): void
@@ -70,6 +69,6 @@ export abstract class BaseMediaDetailsComponent implements OnInit, AfterViewInit
   }
 
   protected updateMedia() {
-    this.service.set(this.media);
+    this.service.update(this.media);
   }
 }

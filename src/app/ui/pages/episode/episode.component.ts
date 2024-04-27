@@ -1,9 +1,10 @@
 import {AfterViewInit, Component, EventEmitter, OnInit} from '@angular/core';
 import {Episode} from "../../../data/models/episode";
-import {EpisodeService} from "../../../data/services/episode.service";
 import {switchMap} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Source} from "../../../data/models/source";
+import {ShowsService} from "../../../data/services/shows.service";
+import {EpisodeService} from "../../../data/services/episode.service";
 
 @Component({
   selector: 'episode-cmp',

@@ -6,16 +6,16 @@ import {MediaService} from './media.service';
 import {UrlUtil} from "../../shared/url-util";
 import {FsShow} from "../models/fs-show";
 import {Show} from "../models/show";
-import {Episode} from "../models/episode";
-import {EpisodeService} from "./episode.service";
+import {FsSeason} from "../models/fs-season";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShowsService extends MediaService<Show, FsShow> {
 
-  constructor(db: AngularFirestore, private episodeService: EpisodeService) {
-    super(db, 'tvs');
+  constructor(db: AngularFirestore, snackBar: MatSnackBar) {
+    super(db, "tvs", snackBar);
   }
 
   searchPath = () => 'search/tv';
@@ -50,16 +50,12 @@ export class ShowsService extends MediaService<Show, FsShow> {
 
   mapFsTo(doc: any): FsShow {
     const data = doc.data();
-    return new FsShow(
-      doc.id,
-      data.tmdbId,
-      data.trailers
-    );
+    return new FsShow(doc.id, data.trailers);
   }
 
   mapApiTo(data: any): Show {
     return new Show(
-      undefined,
+      data.id,
       data.name,
       data.original_name,
       data.poster_path,
@@ -69,7 +65,6 @@ export class ShowsService extends MediaService<Show, FsShow> {
       data.runtime,
       this.parseSeasons(data.seasons),
       data['number_of_seasons'],
-      data.id
     );
   }
 
@@ -82,56 +77,52 @@ export class ShowsService extends MediaService<Show, FsShow> {
   }
 
   mergeApiAndFs(show: Show, fsShow: FsShow): Show {
-    show.id = fsShow.id;
-    show.tmdbId = fsShow.tmdbId;
     show.trailers = fsShow.trailers != null ? fsShow.trailers.map(value => UrlUtil.parse(value)) : [];
     return show;
   }
 
   mapApiToFs(data: Show): FsShow {
-    return JSON.parse(JSON.stringify(
-      new FsShow(data.id,
-        data.tmdbId,
-        data.trailers == null ? [] : data.trailers.map(value => value.shortUrl)
-      )
-    ));
+    return FsShow.fromShow(data);
   }
 
-  getSeason(tvId: number, seasonNumber: number): Observable<Season> {
-    return this.requestApi(`tv/${tvId}/season/${seasonNumber}?language=vi-VN`)
-      .pipe(
-        map((e) => {
-          const res = e.response;
-          const season = new Season(res['id'], res['name'], res['season_number'], res['episode_count']);
+  async updateSeason(show: Show, seasonNumber: number) {
+    let fsSeason = FsSeason.fromSeason(show.getSeason(seasonNumber));
+    await this.mediaCollection
+      .doc(show.id.toString())
+      .collection("seasons")
+      .doc(seasonNumber.toString())
+      .set({...JSON.parse(JSON.stringify(fsSeason))})
+      .then(() => this.showMessage("Update season successfully!"))
+      .catch((error) => this.showMessage(`Error writing document: ${error}`));
+  }
 
-          season.episodes = res['episodes']
-            .map(raw =>
-              new Episode(
-                undefined,
-                raw.name,
-                raw.original_name,
-                raw.still_path,
-                raw.overview,
-                raw.release_date,
-                raw.runtime,
-                raw.id,
-                raw.episode_number,
-                []
-              ));
-          season.episodeCount = season.episodes.length;
-          return season;
-        }),
+  getSeason(show: Show, seasonNumber: number): Observable<Season> {
+    return this.requestApi(`tv/${show.id}/season/${seasonNumber}?language=vi-VN`)
+      .pipe(
+        map((e) => Season.fromJson(e.response)),
         switchMap(season =>
-          this.episodeService.episodesObservable.pipe(map(fsEps => {
-            season.episodes.forEach(ep => {
-              let fsEp = fsEps.find(value => value.tmdbId == ep.tmdbId)
-              if (fsEp != null) {
-                ep.id = fsEp.id;
-                ep.sources = fsEp.sources == null ? [] : fsEp.sources.map((v: string) => UrlUtil.parse(v));
+          this.db.collection("tvs")
+            .doc(show.id.toString())
+            .collection("seasons")
+            .doc(seasonNumber.toString())
+            .get()
+            .pipe(map(value => {
+              let data = value.data();
+              if (data == null) {
+                return season;
               }
-            })
-            return season;
-          })))
+              let fsSeason = new FsSeason(data.number, data.episodes);
+              if (fsSeason.episodes.length > 0) {
+                for (let episode of season.episodes) {
+                  for (let fsEpisode of fsSeason.episodes) {
+                    if (episode.number == fsEpisode.number) {
+                      episode.sources = fsEpisode.sources.map(value => UrlUtil.parse(value))
+                    }
+                  }
+                }
+              }
+              return season;
+            })))
       );
   }
 }

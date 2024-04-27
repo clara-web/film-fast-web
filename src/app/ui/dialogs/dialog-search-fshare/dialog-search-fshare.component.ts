@@ -26,14 +26,4 @@ export class DialogSearchFshareComponent extends DialogSearchBaseComponent {
               service: SearchLinkService) {
     super(options, dialogRef, service);
   }
-
-  processSourceString(title: string, sourceStr: string): Source {
-    // https://www.fshare.vn/file/PH2I4Q2VYV9E?token=1708841671
-    let prefix = "https://www.fshare.vn/file/";
-    if (sourceStr.startsWith(prefix)) {
-      let firstQueryParamIndex = sourceStr.indexOf("?")
-      let contentId = sourceStr.substring(prefix.length, firstQueryParamIndex > 0 ? firstQueryParamIndex : sourceStr.length);
-      return new FShareSource(title, contentId, "auto", "auto", "auto")
-    }
-  }
 }

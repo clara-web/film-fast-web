@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>{{ data.show.title + " | Mùa " + data.season.number + ": " + data.season.name }}</h2>
+<mat-divider></mat-divider>
+<mat-dialog-content>
+  <textarea matInput style="width: 100%" cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="5"
+            cdkAutosizeMaxRows="15" [(ngModel)]="value"></textarea>
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button mat-dialog-close (click)="submitData()">OK</button>
+</mat-dialog-actions>

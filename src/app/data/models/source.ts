@@ -2,9 +2,6 @@ export abstract class Source {
   protected constructor(
     public name: string,
     public url: string,
-    public quality: string,
-    public audio: string,
-    public subtitle: string,
     public shortUrl: string
   ) {
   }
@@ -18,27 +15,18 @@ export class YouTubeSource extends Source {
   constructor(name: string, public contentId: string) {
     super(name,
       `https://www.youtube.com/watch?v=${contentId}`,
-      "auto",
-      "auto",
-      "auto",
-      `yt://${contentId}?name=${name}`);
+      `yt://${contentId}?name=${name}`,
+    );
   }
 }
 
 export class FShareSource extends Source {
   scheme: string = "fs://";
 
-  toShortUrl(): string {
-    return `${this.scheme}${this.contentId}?name=${this.name}&qua=${this.quality}&aud=${this.audio}&sub=${this.subtitle}`
-  }
-
-  constructor(name: string, public contentId: string, quality: string, audio: string, subtitle: string) {
+  constructor(name: string, public contentId: string) {
     super(name,
       `https://www.fshare.vn/file/${contentId}`,
-      quality,
-      audio,
-      subtitle,
-      `fs://${contentId}?name=${name}&qua=${quality}&aud=${audio}&sub=${subtitle}`
+      `fs://${contentId}?name=${name}`
     );
   }
 }
@@ -49,9 +37,6 @@ export class DailymotionSource extends Source {
   constructor(name: string, public contentId: string) {
     super(name,
       `https://www.dailymotion.com/video/${contentId}`,
-      "auto",
-      "auto",
-      "auto",
       `dai://${contentId}?name=${name}`);
   }
 }
@@ -62,9 +47,6 @@ export class GDriveSource extends Source {
   constructor(name: string, public contentId: string) {
     super(name,
       `https://www.googleapis.com/drive/v3/files/${contentId}?alt=media&key=AIzaSyDrQoYphLoyLUHL_7o9C2tV7f5Zhit0XkI`,
-      "auto",
-      "auto",
-      "auto",
       `gd://${contentId}?name=${name}`);
   }
 }
@@ -85,9 +67,6 @@ export class HlsSource extends Source {
   constructor(name: string, url: string) {
     super(name,
       url,
-      "auto",
-      "auto",
-      "auto",
       HlsSource.toShortUrl(url, name, "auto", "auto", "auto")
     );
   }
@@ -96,7 +75,7 @@ export class HlsSource extends Source {
 export class OtherSource extends Source {
   scheme: string = "https://";
 
-  constructor(name: string, url: string, quality: string, audio: string, subtitle: string) {
-    super(name, url, quality, audio, subtitle, url);
+  constructor(name: string, url: string) {
+    super(name, url, url);
   }
 }

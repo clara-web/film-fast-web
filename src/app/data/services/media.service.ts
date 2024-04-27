@@ -1,21 +1,18 @@
 import {AngularFirestore, AngularFirestoreCollection,} from '@angular/fire/compat/firestore';
 import {Media} from 'app/data/models/media';
 import {ResultPage} from 'app/data/models/result_page';
-import {map, mergeMap, Observable} from 'rxjs';
-import {ajax, AjaxResponse} from 'rxjs/ajax';
+import {map, Observable, switchMap} from 'rxjs';
+import {AjaxResponse} from 'rxjs/ajax';
 import {FsMedia} from "../models/fs-media";
 import {BaseService} from "./base.service";
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 export abstract class MediaService<T extends Media, F extends FsMedia> extends BaseService {
   mediaCollection: AngularFirestoreCollection<F>;
-  allMediaFBObservable: Observable<F[]>;
 
-  protected constructor(private db: AngularFirestore, path: string) {
+  protected constructor(protected db: AngularFirestore, path: string, protected snackBar: MatSnackBar) {
     super();
     this.mediaCollection = this.db.collection(path);
-    this.allMediaFBObservable = this.mediaCollection
-      .get()
-      .pipe(map((ss) => ss.docs.map((doc) => this.mapFsTo(doc))));
   }
 
   abstract searchPath(): string;
@@ -42,26 +39,27 @@ export abstract class MediaService<T extends Media, F extends FsMedia> extends B
 
   abstract mapApiToFs(data: T): F
 
-  set = (media: T) => this.mediaCollection
-    .doc(media.id)
-    .set({...JSON.parse(JSON.stringify(this.mapApiToFs(media)))});
+  update = (media: T) => this.mediaCollection
+    .doc(`${media.id}`)
+    .set({...JSON.parse(JSON.stringify(this.mapApiToFs(media)))})
+    .then(() => this.showMessage("Update season successfully!"))
+    .catch((error) => this.showMessage(`Error writing document: ${error}`));
 
-  delete = (id: string) => this.mediaCollection.doc(id).delete();
+  delete = (id: string) => this.mediaCollection.doc(id).delete()
+    .then(() => this.showMessage("Delete successfully!"))
+    .catch((error) => this.showMessage(`Error deleting document: ${error}`));
 
   getDetails(id: number): Observable<T> {
-    return this.requestApi(this.detailsPath() + id + '?language=en-US').pipe(
+    return this.requestApi(this.detailsPath() + id + '?language=vi-VN').pipe(
       map((e) => this.mapApiTo(e.response)),
-      mergeMap((m) =>
-        this.allMediaFBObservable.pipe(
-          map((medias) => {
-            const media = medias.find((media) => media.tmdbId == id);
-            if (media != undefined) {
-              this.mergeApiAndFs(m, media);
-            }
-            return m;
-          }),
-        ),
-      )
+      switchMap(value => {
+        return this.mediaCollection.doc(id.toString())
+          .get()
+          .pipe(map(doc => {
+            if (doc.exists) this.mergeApiAndFs(value, this.mapFsTo(doc));
+            return value
+          }));
+      })
     );
   }
 
@@ -133,24 +131,16 @@ export abstract class MediaService<T extends Media, F extends FsMedia> extends B
           response['total_pages'],
           response['total_results']
         );
-        response['results'].forEach((element) => {
-          resultPage.results.push(this.mapApiTo(element));
-        });
+        let results = response['results'].map((element: any) => this.mapApiTo(element));
+        resultPage.results.push(...results);
         return resultPage;
       }),
-      mergeMap((resultPage) =>
-        this.allMediaFBObservable.pipe(
-          map((medias) => {
-            resultPage.results.forEach((m) => {
-              const media = medias.find((media) => media.tmdbId == m.tmdbId);
-              if (media != undefined) {
-                this.mergeApiAndFs(m, media);
-              }
-            });
-            return resultPage;
-          })
-        )
-      )
     );
+  }
+
+  showMessage(message: string) {
+    this.snackBar.open(message, null, {
+      duration: 3000
+    });
   }
 }

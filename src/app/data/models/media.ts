@@ -9,6 +9,5 @@ export interface Media {
   trailers: Source[];
   releaseDate: string;
   runtime: number;
-  tmdbId?: number;
   type: string;
 }

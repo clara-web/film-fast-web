@@ -1,11 +1,23 @@
+import {Episode} from "./episode";
+
 export class FsEpisode {
-  id: string;
-  tmdbId: number;
+  number: number;
   sources: string[];
 
-  constructor(id: string, tmdbId: number, sources: string[]) {
-    this.id = id;
-    this.tmdbId = tmdbId;
+  constructor(number: number, sources: string[]) {
+    this.number = number;
     this.sources = sources;
+  }
+
+  static fromEpisode(episode: Episode): FsEpisode {
+    let sources: string[] = [];
+    if (episode.sources.length > 0) {
+      episode.sources.forEach(source => {
+        if (source != null && source.shortUrl.length > 0) {
+          sources.push(source.shortUrl);
+        }
+      })
+    }
+    return new FsEpisode(episode.number, sources);
   }
 }

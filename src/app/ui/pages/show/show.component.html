@@ -49,7 +49,7 @@
           <mat-tab-group #seasonTabs mat-stretch-tabs="false" mat-align-tabs="start"
                          (selectedTabChange)="tabChanged($event)">
             @for (season of seasons; track $index) {
-              <mat-tab label="{{season.name}}">
+              <mat-tab label="{{tabName(season)}}">
                 @if (isTabSelected($index) || seasons.length == 1) {
                   <season-cmp [show]="show" [seasonNumber]="season.number"></season-cmp>
                 }

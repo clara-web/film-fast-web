@@ -4,7 +4,7 @@ import {Source} from "./source";
 import {Episode} from "./episode";
 
 export class Show implements Media {
-  id?: string;
+  id: string;
   title: string;
   originalTitle: string;
   poster: string;
@@ -12,7 +12,6 @@ export class Show implements Media {
   trailers: Source[];
   releaseDate: string;
   runtime: number;
-  tmdbId?: number;
   type = 'tv';
 
   seasons: Season[];
@@ -34,7 +33,6 @@ export class Show implements Media {
     runtime: number,
     seasons: Season[],
     totalSeasons: number,
-    tmdbId?: number
   ) {
     this.id = id;
     this.title = title;
@@ -47,7 +45,6 @@ export class Show implements Media {
     this.trailers = trailers;
     this.releaseDate = releaseDate;
     this.runtime = runtime;
-    this.tmdbId = tmdbId;
     this.seasons = seasons;
     this.totalSeasons = totalSeasons;
   }
@@ -58,5 +55,14 @@ export class Show implements Media {
 
   updateSeasonEpisode(seasonNumber: number, episodes: Episode[]) {
     this.seasons.find(value => value.number == seasonNumber)?.episodes?.push(...episodes)
+  }
+
+  updateSeason(season: Season) {
+    for (let i = 0; i < this.seasons.length; i++) {
+      if (this.seasons[i].number == season.number) {
+        this.seasons[i] = season;
+        break;
+      }
+    }
   }
 }

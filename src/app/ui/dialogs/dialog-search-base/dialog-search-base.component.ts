@@ -8,6 +8,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {MaterialsModule} from "../../materials/materials.module";
 import {Media} from "../../../data/models/media";
 import {Source} from "../../../data/models/source";
+import {SourceType} from "../../../data/models/source-type";
 
 @Component({
   selector: 'app-dialog-search-base',
@@ -69,7 +70,7 @@ export abstract class DialogSearchBaseComponent implements OnInit, AfterViewInit
         const element = options[index];
         if (element.selected) {
           let searchResultItem = this.searchResult.items[index];
-          this.selected.push(this.processSourceString(searchResultItem.title, searchResultItem.link));
+          this.selected.push(SourceType.determine(searchResultItem.title, searchResultItem.link));
         }
       }
     }
@@ -117,13 +118,11 @@ export abstract class DialogSearchBaseComponent implements OnInit, AfterViewInit
     if (input == undefined || input.length < 5 || this.media.title == undefined) {
       return
     }
-    const source = this.processSourceString(this.media.title, this.addSourceInput?.nativeElement.value)
+    const source = SourceType.determine(this.media.title, this.addSourceInput?.nativeElement.value)
     let find = this.selected.find(value => value.shortUrl == source.shortUrl);
     if (find == null && source.shortUrl != undefined) {
       this.selected.push(source)
       console.log(source.shortUrl);
     }
   }
-
-  abstract processSourceString(title: string, sourceStr: string): Source;
 }

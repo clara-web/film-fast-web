@@ -59,11 +59,9 @@ export abstract class BaseMediaListComponent implements OnInit, AfterViewInit, O
   }
 
   ngOnInit(): void {
-    console.log(`init ${this}`)
   }
 
   ngOnDestroy() {
-    console.log(`destroy ${this}`)
   }
 
   ngAfterViewInit() {

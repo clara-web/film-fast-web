@@ -4,15 +4,15 @@ import {MatTableDataSource} from "@angular/material/table";
 import {Episode} from "../../../data/models/episode";
 import {MaterialsModule} from "../../materials/materials.module";
 import {ShowsService} from "../../../data/services/shows.service";
-import {Source} from "../../../data/models/source";
 import {Router} from "@angular/router";
 import {DialogSearchOtherComponent} from "../../dialogs/dialog-search-other/dialog-search-other.component";
-import {
-  DialogDeleteConfirmationComponent
-} from "../../dialogs/dialog-delete-confirmation/dialog-delete-confirmation.component";
 import {MatDialog} from "@angular/material/dialog";
-import {EpisodeService} from "../../../data/services/episode.service";
 import {MatBadge} from "@angular/material/badge";
+import {Season} from "../../../data/models/season";
+import {
+  DialogImportEpisodesSourceComponent
+} from "../../dialogs/dialog-import-episodes-source/dialog-import-episodes-source.component";
+import {delay} from "rxjs";
 
 @Component({
   selector: 'season-cmp',
@@ -31,32 +31,27 @@ export class SeasonComponent implements AfterViewInit {
 
   displayedColumns: string[] = ['no', 'name', 'action'];
 
+  seasonDetail: Season;
   episodes: Episode[] = [];
   dataSource = new MatTableDataSource<Episode>(this.episodes);
 
-  constructor(private service: ShowsService, private dialog: MatDialog, private epService: EpisodeService, private router: Router,) {
+  constructor(private service: ShowsService, private dialog: MatDialog, private router: Router,) {
   }
 
   ngAfterViewInit(): void {
-    this.service.getSeason(this.show.tmdbId, this.seasonNumber)
+    this.service.getSeason(this.show, this.seasonNumber)
       .subscribe({
         next: (v) => {
+          this.seasonDetail = v;
           this.episodes = v.episodes
-          this.show.updateSeasonEpisode(this.seasonNumber, v.episodes)
+          this.show.updateSeasonEpisode(this.seasonNumber, v.episodes);
           this.dataSource = new MatTableDataSource(this.episodes)
-        },
-        error: (err) => {
-          console.log(err)
         },
       })
   }
 
-  printSourceInShort(sources: Source[]) {
-    return sources.map(s => s.shortUrl).join(", ");
-  }
-
   openEpisodeDetails(epNumber: number) {
-    this.router.navigate([`show/${this.show.tmdbId}/${this.seasonNumber}/${epNumber}`])
+    this.router.navigate([`show/${this.show.id}/${this.seasonNumber}/${epNumber}`])
       .then(value => console.log(value))
   }
 
@@ -88,8 +83,18 @@ export class SeasonComponent implements AfterViewInit {
         ep.sources = [];
       }
       if (value?.length > 0) {
-        ep.sources.push(...value)
-        await this.epService.set(ep);
+        ep.sources.push(...value);
+        for (const season of this.show.seasons) {
+          if (season.number == this.seasonNumber) {
+            for (let i = 0; i < season.episodes.length; i++) {
+              if (season.episodes[i].id == ep.id) {
+                season.episodes[i] = ep;
+                await this.service.update(this.show);
+                break;
+              }
+            }
+          }
+        }
       }
     })
   }
@@ -104,5 +109,21 @@ export class SeasonComponent implements AfterViewInit {
     //     await this.update(this.media);
     //   }
     // })
+  }
+
+  imports() {
+    this.dialog.open(DialogImportEpisodesSourceComponent, {
+      width: "50vw",
+      data: {
+        show: this.show,
+        season: this.seasonDetail
+      },
+    },)
+      .afterClosed()
+      .subscribe(async value => {
+        this.seasonDetail.updateEpisodeLink(value)
+        this.show.updateSeason(this.seasonDetail);
+        await this.service.updateSeason(this.show, this.seasonNumber);
+      })
   }
 }

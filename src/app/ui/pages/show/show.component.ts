@@ -6,7 +6,6 @@ import {BaseMediaDetailsComponent} from "../base/base-media-details.component";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Season} from "../../../data/models/season";
 import {Show} from "../../../data/models/show";
-import {MoviesService} from "../../../data/services/movies.service";
 import {Location} from "@angular/common";
 
 @Component({
@@ -27,7 +26,7 @@ export class ShowComponent extends BaseMediaDetailsComponent {
   tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     let season = this.seasons[tabChangeEvent.index];
     let ssNumber = season.number;
-    this.location.replaceState(`show/${this.show.tmdbId}/${ssNumber}`);
+    this.location.replaceState(`show/${this.show.id}/${ssNumber}`);
   }
 
   isTabSelected($index: number) {
@@ -40,5 +39,9 @@ export class ShowComponent extends BaseMediaDetailsComponent {
   onLoaded() {
     this.show = (this.media as Show);
     this.seasons = (this.media as Show).seasons;
+  }
+
+  tabName(season: Season) {
+    return season.number + ": " + season.name
   }
 }

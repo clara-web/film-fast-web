@@ -1,9 +1,7 @@
-import {FShareSource, HlsSource, OtherSource, Source, YouTubeSource} from "../data/models/source";
+import {Source} from "../data/models/source";
+import {SourceType} from "../data/models/source-type";
 
 export class UrlUtil {
-  static YOUTUBE_SCHEME = "yt://";
-  static FSHARE_SCHEME = "fs://";
-  static HLS_SCHEME = "hls://";
 
   static getAllUrlParams(url: string) {
 
@@ -70,32 +68,6 @@ export class UrlUtil {
 
   static parse(url: string): Source {
     url = String(url);
-    const urlParams = UrlUtil.getAllUrlParams(url);
-    if (url.startsWith(UrlUtil.YOUTUBE_SCHEME)) {
-      return new YouTubeSource(url["name"], UrlUtil.getContentId(url, UrlUtil.YOUTUBE_SCHEME));
-    }
-    if (url.startsWith(UrlUtil.FSHARE_SCHEME)) {
-      return new FShareSource(
-        urlParams["name"],
-        UrlUtil.getContentId(url, UrlUtil.FSHARE_SCHEME),
-        urlParams["qua"],
-        urlParams["aud"] == null ? "unknown" : urlParams["audio"],
-        urlParams["sub"] == null ? "none" : urlParams["sub"],
-      );
-    }
-    if (url.startsWith(UrlUtil.HLS_SCHEME)) {
-      return new HlsSource(urlParams["name"], UrlUtil.getContentId(url, UrlUtil.HLS_SCHEME));
-    }
-    return new OtherSource(
-      urlParams["name"],
-      url,
-      urlParams["qua"],
-      urlParams["aud"] == null ? "unknown" : urlParams["aud"],
-      urlParams["sub"] == null ? "none" : urlParams["sub"],
-    );
-  }
-
-  static getContentId(url: string, scheme: string) {
-    return (url.indexOf("?") > 0) ? url.substring(scheme.length, url.indexOf("?")) : url.substring(scheme.length);
+    return SourceType.determine(UrlUtil.getAllUrlParams(url)['name'], url)
   }
 }

@@ -14,6 +14,7 @@ export class EpisodeSourcesComponent extends SourcesComponent<Episode> {
     super(dialog);
   }
 
-  update = (episode: Episode) => this.service.set(episode);
+  update = (episode: Episode) => {
+  };
 }
 
